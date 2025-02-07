@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.post('/add', verify, async (req, res) => {
     try {
+        console.log("hey");
         const { type, amount, category, description } = req.body;
         const newtransaction = new Transaction({
             userId: req.user.id,

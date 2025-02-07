@@ -4,7 +4,7 @@ const mongoURI ='mongodb://localhost:27017/finance_tracker';
 const app=express();
 const authRoutes=require('./routes/auth')
 const transRoutes=require('./routes/transaction')
-const port=5000;
+const port=5001;
 app.use(express.json())
 
 app.get('/',(req,res)=>{
