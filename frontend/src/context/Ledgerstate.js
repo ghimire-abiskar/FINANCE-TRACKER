@@ -1,9 +1,9 @@
-import { useState, createContext } from "react";
+import { useState } from "react";
 
 import Ledgercontext from './Ledgercontext'
 
 let Datacontext = (props) => {
-    const host = "http://localhost:5000"
+    const host = "http://localhost:5001"
 
     const [ledgers, setledgers] = useState([]);
 
@@ -14,14 +14,14 @@ let Datacontext = (props) => {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTI1Mjc3OTFmYzcxMzA2YmE1MWNjMSIsImlhdCI6MTczODg2NDM4NH0.HRCRxpeNT9UYn3WzhWxIQLrB5jZVE0gmOqktC70hcwE"
+                    "Authorization": localStorage.getItem('token')
                 },
             });
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
-
             const json = await response.json();
+            // alert('Hey');
             console.log(json);
             setledgers(json);
         }
@@ -31,19 +31,14 @@ let Datacontext = (props) => {
     }
 
     const addLedger = async (type, amount, category, description) => {
-        // const ledger = {
-        //     type: type,
-        //     amount: amount,
-        //     category: category,
-        //     description: description
-        // };
+
         const url = `${host}/api/trans/add`;
         try {
             const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YTI1Mjc3OTFmYzcxMzA2YmE1MWNjMSIsImlhdCI6MTczODg2NDM4NH0.HRCRxpeNT9UYn3WzhWxIQLrB5jZVE0gmOqktC70hcwE"
+                    "Authorization": localStorage.getItem('token')
                 },
                 body: JSON.stringify({ type, amount, category, description })
             });
@@ -59,16 +54,15 @@ let Datacontext = (props) => {
     };
 
 
-    const updateledger = async (type, amount, category, description, id) => {
+    const updateLedger = async (type, amount, category, description, id) => {
         //API CALLS
-
         const url = `${host}/api/trans/update/${id}`;
         try {
             const response = await fetch(url, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": localStorage.getItem('token')
+                    "Authorization": localStorage.getItem('token')
                 },
                 body: JSON.stringify({ type, amount, category, description })
             });
@@ -100,15 +94,16 @@ let Datacontext = (props) => {
 
 
     const deleteledger = async (id) => {
-        const url = `${host}/api/trans/deletenote/${id}`;
+        const url = `${host}/api/trans/delete/${id}`;
         try {
             const response = await fetch(url, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
-                    "auth-token": localStorage.getItem('token')
+                    "Authorization": localStorage.getItem('token')
                 },
             });
+            console.log(response);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
@@ -125,7 +120,7 @@ let Datacontext = (props) => {
     }
     return (
 
-        <Ledgercontext.Provider value={{ ledgers, addLedger, updateledger, deleteledger, fetchLedgers }}>
+        <Ledgercontext.Provider value={{ ledgers, addLedger, updateLedger, deleteledger, fetchLedgers }}>
             {props.children}
         </Ledgercontext.Provider>
 

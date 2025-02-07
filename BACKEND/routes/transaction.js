@@ -30,11 +30,9 @@ router.get('/all', verify, async (req, res) => {
         const skip = (page - 1) * limit;
 
         const transactions = await Transaction.find({ userId: req.user.id }).sort({ date: -1 }).skip(skip).limit(limit);
-        const total=Transaction.countDocuments({userId:req.user.id});
-        res.json({ transactions,
-            totalpages: Math.ceil(transactions/limit),
-            currentpage:page
-        });
+        const total = Transaction.countDocuments({ userId: req.user.id });
+
+        res.json(transactions);
     }
     catch {
         res.status(500).json({ error: "Internal server error" });
@@ -60,22 +58,26 @@ router.delete('/delete/:id', verify, async (req, res) => {
 
 router.put('/update/:id', verify, async (req, res) => {
     try {
-        const transaction = await Transaction.findById(req.params.id);
+        const transaction = await Transaction.findById(req.params.id); 
         const { type, amount, category, description } = req.body;
         if (!transaction) {
             return res.status(404).json({ error: "Transaction not found!!!" })
         }
-        if (!transaction.user.toString() == req.user) {
-            return res.status(401).json({ error: "Unauthorized access to delete the transaction\n" });
+        console.log(req.user);
+        if (transaction.userId.toString() != req.user.id) {
+            return res.status(401).json({ error: "Unauthorized access to update the transaction\n" });
         }
+        console.log("hey");
         transaction.type = type || transaction.type;
         transaction.amount = amount || transaction.amount;
         transaction.category = category || transaction.category;
         transaction.description = description || transaction.description;
-        res.json({ message: "Transaction deleted successfully" });
+
+        await transaction.save();
+        res.json({ message: "Transaction updated successfully" });
     }
-    catch {
-        res.status(500).json({ error: "Failed to delete the transaction" });
+    catch (error) {
+        res.status(500).json(error);
     }
 })
 
