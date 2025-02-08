@@ -46,8 +46,8 @@ let Datacontext = (props) => {
                 throw new Error(`Response status: ${response.status}`);
             }
             const json = await response.json();
-            console.log("Hello")
-            setledgers(ledgers.concat(json));
+            console.log(json.newtransaction)
+            setledgers(ledgers.concat(json.newtransaction));
         } catch (error) {
             console.error(error.message);
         }
@@ -93,7 +93,7 @@ let Datacontext = (props) => {
     }
 
 
-    const deleteledger = async (id) => {
+    const deleteLedger = async (id) => {
         const url = `${host}/api/trans/delete/${id}`;
         try {
             const response = await fetch(url, {
@@ -120,7 +120,7 @@ let Datacontext = (props) => {
     }
     return (
 
-        <Ledgercontext.Provider value={{ ledgers, addLedger, updateLedger, deleteledger, fetchLedgers }}>
+        <Ledgercontext.Provider value={{ ledgers, addLedger, updateLedger, deleteLedger, fetchLedgers }}>
             {props.children}
         </Ledgercontext.Provider>
 

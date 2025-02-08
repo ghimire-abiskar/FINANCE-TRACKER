@@ -1,56 +1,62 @@
-import React, { useState, useImperativeHandle, forwardRef } from "react";
-
-const Modal = forwardRef(({ ledger, onSave }, ref) => {
-    const [formData, setFormData] = useState({
-        type: ledger?.type || "expense",
-        amount: ledger?.amount || "",
-        category: ledger?.category || "",
-        description: ledger?.description || "",
-    });
-
-    const [isOpen, setIsOpen] = useState(false);
-
-    useImperativeHandle(ref, () => ({
-        openModal: () => setIsOpen(true),
-        closeModal: () => setIsOpen(false),
-    }));
-
+import { useState,useContext } from 'react';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import LedgerContext from '../context/Ledgercontext';
+function TransModal({ ledger, setledger, modalRef }) {
+    const { updateLedger } = useContext(LedgerContext);
+    const [show, setShow] = useState(false);
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+        setledger({ ...ledger, [e.target.name]: e.target.value });
+    }
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
 
-    const handleSubmit = () => {
-        onSave(formData);
-        setIsOpen(false);
-    };
-
-    if (!isOpen) return null;
+    const handleUpdate = () => {
+        updateLedger(ledger.type, ledger.amount, ledger.category, ledger.description, ledger._id);
+        handleClose();
+    }
 
     return (
-        <div className="modal show d-block" style={{ background: "rgba(0,0,0,0.5)" }}>
-            <div className="modal-dialog">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">{ledger ? "Edit Transaction" : "Add Transaction"}</h5>
-                        <button type="button" className="btn-close" onClick={() => setIsOpen(false)}></button>
-                    </div>
-                    <div className="modal-body">
-                        <input type="text" name="category" value={formData.category} onChange={handleChange} placeholder="Category" className="form-control mb-2" />
-                        <input type="number" name="amount" value={formData.amount} onChange={handleChange} placeholder="Amount" className="form-control mb-2" />
-                        <input type="text" name="description" value={formData.description} onChange={handleChange} placeholder="Description" className="form-control mb-2" />
-                        <select name="type" value={formData.type} onChange={handleChange} className="form-control mb-2">
-                            <option value="income">Income</option>
-                            <option value="expense">Expense</option>
-                        </select>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-secondary" onClick={() => setIsOpen(false)}>Close</button>
-                        <button type="button" className="btn btn-primary" onClick={handleSubmit}>Save</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-});
+        <>
+            <Button ref={modalRef} variant="primary" className='d-none' onClick={handleShow}>
+                Launch demo modal
+            </Button>
 
-export default Modal;
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Edit Transaction</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <form>
+                        <div className="mb-3">
+                            <label className="form-label">Type</label>
+                            <input type="text" className="form-control" name="type" value={ledger.type} onChange={handleChange} />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Category</label>
+                            <input type="text" className="form-control" name="category" value={ledger.category} onChange={handleChange} />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Description</label>
+                            <input type="text" className="form-control" name="description" value={ledger.description} onChange={handleChange} />
+                        </div>
+                        <div className="mb-3">
+                            <label className="form-label">Amount</label>
+                            <input type="text" className="form-control" name="amount" value={ledger.amount} onChange={handleChange} />
+                        </div>
+                    </form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleClose}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={handleUpdate}>
+                        Save Changes
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+export default TransModal;

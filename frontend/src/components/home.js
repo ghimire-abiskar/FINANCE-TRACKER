@@ -2,15 +2,16 @@ import { useContext, useEffect, useState, useRef } from "react";
 import LedgerContext from "../context/Ledgercontext";
 import { useNavigate } from "react-router-dom";
 import Addtrans from './Addtrans'
-
+import TransModal from './Modal'
+import Delmodal from "./Delmodal";
 
 const Home = () => {
-  const { ledgers, fetchLedgers, updateLedger, deleteledger } = useContext(LedgerContext);
+  const { ledgers, fetchLedgers, deleteledger } = useContext(LedgerContext);
   const navigator = useNavigate();
-  // const [ledger, setledger] = useState(null);
-  const ref = useRef(null);
-  const refclose = useRef(null);
   const [ledger, setledger] = useState({ type: "", category: "", description: "", amount: "", _id: "" });
+  const modalRef = useRef(null);
+  const addRef=useRef(null);
+  const delRef=useRef(null);
 
   useEffect(() => {
     if (localStorage.getItem('token') != null) {
@@ -22,78 +23,23 @@ const Home = () => {
   }, []);
 
   const handleEdit = (ldg) => {
-    // alert(ldg.type);
     setledger(ldg);
-    ref.current.click();
+    modalRef.current.click();  
   };
 
-  const handleclick = () => {
-    updateLedger(ledger.type, ledger.amount, ledger.category, ledger.description, ledger._id);
-    // alert("Successfully edited!!");
-    refclose.current.click();
-  }
   const handleDelete = (ldg) => {
-    deleteledger(ldg._id);
-  }
+    setledger(ldg);
+    delRef.current.click();
+  };
 
-  const onchange = (e) => {
-    setledger({ ...ledger, [e.target.name]: e.target.value })
+  const handleAdd = ()=>{
+    addRef.current.click();
   }
-
 
   return (
     <>
-      <button ref={ref} type="button" className="d-none btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-      </button>
-
-      <div>
-        <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLabel">Edit your ledger</h5>
-                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div className="modal-body">
-                <div className='container my-5'>
-                  <form className='container my-3'>
-                    <div className="mb-3">
-                      <label htmlFor="title" className="form-label">Type</label>
-                      <input type="text" className="form-control" id="title" value={ledger.type} name='type' onChange={onchange} />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="title" className="form-label">Category</label>
-                      <input type="text" className="form-control" id="title" value={ledger.category} name='category' onChange={onchange} />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="desc" className="form-label">Description</label>
-                      <input type="text" className="form-control" id="description" value={ledger.description} name='description' onChange={onchange} />
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="tag" className="form-label">Amount</label>
-                      <input type="text" className="form-control" id="tag" value={ledger.amount} name='amount' onChange={onchange} />
-                    </div>
-                  </form>
-                </div>
-              </div>
-              <div className="modal-footer">
-                <button ref={refclose} type="button" className="close" data-bs-dismiss="modal" aria-label="Close"> Close</button>
-
-                {/* <button type="button" disabled={ledger.title.length < 5 || ledger.description.length < 5} className="btn btn-primary" onClick={handleclick}>Update ledger</button> */}
-                <button type="button" className="btn btn-primary" onClick={handleclick}>Update ledger</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-
-
+      <TransModal ledger={ledger} setledger={setledger} modalRef={modalRef} />
+      <Delmodal id={ledger._id} delRef={delRef}></Delmodal>
       <div className="container mt-4">
         <h2 className="text-center mb-4">Transactions Overview</h2>
 
@@ -128,11 +74,10 @@ const Home = () => {
             <p className="text-center text-muted">No transactions found</p>
           )}
         </div>
+        <button className="btn btn-primary" onClick={handleAdd}>Add transaction</button>
       </div>
 
-      <Addtrans></Addtrans>
-
-
+      <Addtrans addRef={addRef}/>
     </>
   );
 };
