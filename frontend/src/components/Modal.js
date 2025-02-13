@@ -1,4 +1,4 @@
-import { useState,useContext } from 'react';
+import { useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import LedgerContext from '../context/Ledgercontext';
@@ -30,7 +30,11 @@ function TransModal({ ledger, setledger, modalRef }) {
                     <form>
                         <div className="mb-3">
                             <label className="form-label">Type</label>
-                            <input type="text" className="form-control" name="type" value={ledger.type} onChange={handleChange} />
+                            <select className="form-control" value={ledger.type} name='type' onChange={handleChange} >
+                                <option>--Select Type--</option>
+                                <option value="income">Income</option>
+                                <option value="spend">Spend</option>
+                            </select>
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Category</label>

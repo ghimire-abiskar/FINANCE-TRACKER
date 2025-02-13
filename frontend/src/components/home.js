@@ -51,7 +51,7 @@ const Home = () => {
                   <h5 className="text-center fw-bold">{ledger.category}</h5>
                   <p className="text-muted text-center">{ledger.description}</p>
                   <p className={`fw-bold text-center text-${ledger.type === "income" ? "success" : "danger"}`}>
-                    {ledger.type === "income" ? "+" : "-"} ${ledger.amount}
+                    {ledger.type === "income" ? "+" : "-"} Rs {ledger.amount}
                   </p>
                   <div className="d-flex justify-content-center">
                     <button

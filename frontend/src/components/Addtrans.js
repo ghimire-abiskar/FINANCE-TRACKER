@@ -2,9 +2,9 @@ import { useState, useContext } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import LedgerContext from '../context/Ledgercontext';
-function Addtrans({addRef}) {
+function Addtrans({ addRef }) {
     const { addLedger } = useContext(LedgerContext);
-    const [ledger, setledger] = useState({ type: "", category: "", description: "", amount: ""});
+    const [ledger, setledger] = useState({ type: "", category: "", description: "", amount: "" });
     const [show, setShow] = useState(false);
     const handleChange = (e) => {
         setledger({ ...ledger, [e.target.name]: e.target.value });
@@ -12,7 +12,10 @@ function Addtrans({addRef}) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const handleAdd = () => {
+    const handleAdd = (e) => {
+        e.preventDefault();
+        alert("Hello");
+
         addLedger(ledger.type, ledger.amount, ledger.category, ledger.description);
         handleClose();
     }
@@ -28,33 +31,41 @@ function Addtrans({addRef}) {
                     <Modal.Title>Add a new Transaction</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <form>
+                    <form onSubmit={handleAdd}>
                         <div className="mb-3">
                             <label className="form-label">Type</label>
-                            <input type="text" className="form-control" name="type" value={ledger.type} onChange={handleChange} />
+                            <select className="form-control"
+                                name="type"
+                                value={ledger.type}
+                                onChange={handleChange}
+                                required>
+                                <option value={""}>--Select Type--</option>
+                                <option value={"income"}>Income</option>
+                                <option value={"spend"}>Spend</option>
+                            </select>
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Category</label>
-                            <input type="text" className="form-control" name="category" value={ledger.category} onChange={handleChange} />
+                            <input type="text" className="form-control" name="category" value={ledger.category} onChange={handleChange} required />
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Description</label>
-                            <input type="text" className="form-control" name="description" value={ledger.description} onChange={handleChange} />
+                            <input type="text" className="form-control" name="description" value={ledger.description} onChange={handleChange} required />
                         </div>
                         <div className="mb-3">
                             <label className="form-label">Amount</label>
-                            <input type="text" className="form-control" name="amount" value={ledger.amount} onChange={handleChange} />
+                            <input type="text" className="form-control" name="amount" value={ledger.amount} onChange={handleChange} required />
                         </div>
+                        <Modal.Footer>
+                            <Button variant="secondary" onClick={handleClose}>
+                                Close
+                            </Button>
+                            <Button variant="primary" type="submit">
+                                Save Changes
+                            </Button>
+                        </Modal.Footer>
                     </form>
                 </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>
-                        Close
-                    </Button>
-                    <Button variant="primary" onClick={handleAdd}>
-                        Save Changes
-                    </Button>
-                </Modal.Footer>
             </Modal>
         </>
     );
