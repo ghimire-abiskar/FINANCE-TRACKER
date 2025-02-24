@@ -10,9 +10,21 @@ const Home = () => {
   const navigator = useNavigate();
   const [ledger, setledger] = useState({ type: "", category: "", description: "", amount: "", _id: "" });
   const modalRef = useRef(null);
-  const addRef=useRef(null);
-  const delRef=useRef(null);
+  const addRef = useRef(null);
+  const delRef = useRef(null);
+  const [filterType, setFilterType] = useState("all");
+  const [categoryType, setcategoryType] = useState("");
+  const [minAmount, setminAmount] = useState("");
+  const [maxAmount, setmaxAmount] = useState("");
 
+  const filteredLedgers = ledgers.filter((ledger) => {
+    return (
+      (filterType === "all" || ledger.type === filterType) &&
+      (categoryType === "" || ledger.category.toLowerCase().includes(categoryType.toLowerCase())) &&
+      (minAmount === "" || ledger.amount >= Number(minAmount)) &&
+      (maxAmount === "" || ledger.amount <= Number(maxAmount))
+    );
+  });
   useEffect(() => {
     if (localStorage.getItem('token') != null) {
       fetchLedgers();
@@ -24,7 +36,7 @@ const Home = () => {
 
   const handleEdit = (ldg) => {
     setledger(ldg);
-    modalRef.current.click();  
+    modalRef.current.click();
   };
 
   const handleDelete = (ldg) => {
@@ -32,7 +44,7 @@ const Home = () => {
     delRef.current.click();
   };
 
-  const handleAdd = ()=>{
+  const handleAdd = () => {
     addRef.current.click();
   }
 
@@ -43,9 +55,38 @@ const Home = () => {
       <div className="container mt-4">
         <h2 className="text-center mb-4">Transactions Overview</h2>
 
+        {ledgers.length > 0 && <div className="d-flex gap-3 mb-3">
+          <select className="form-select" value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+            <option value="all">--Select Type--</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Category"
+            value={categoryType}
+            onChange={(e) => setcategoryType(e.target.value)}
+          />
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Min Amount"
+            value={minAmount}
+            onChange={(e) => setminAmount(e.target.value)}
+          />
+          <input
+            type="number"
+            className="form-control"
+            placeholder="Max Amount"
+            value={maxAmount}
+            onChange={(e) => setmaxAmount(e.target.value)}
+          />
+        </div>}
+
         <div className="row">
-          {ledgers.length > 0 ? (
-            ledgers.map((ledger) => (
+          {filteredLedgers.length > 0 ? (
+            filteredLedgers.map((ledger) => (
               <div key={ledger._id} className="col-md-4 mb-3">
                 <div className="card shadow-sm p-3">
                   <h5 className="text-center fw-bold">{ledger.category}</h5>
@@ -77,7 +118,7 @@ const Home = () => {
         <button className="btn btn-primary" onClick={handleAdd}>Add transaction</button>
       </div>
 
-      <Addtrans addRef={addRef}/>
+      <Addtrans addRef={addRef} />
     </>
   );
 };

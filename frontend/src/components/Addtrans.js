@@ -14,9 +14,8 @@ function Addtrans({ addRef }) {
 
     const handleAdd = (e) => {
         e.preventDefault();
-        alert("Hello");
-
         addLedger(ledger.type, ledger.amount, ledger.category, ledger.description);
+        setledger({ type: "", category: "", description: "", amount: "" });
         handleClose();
     }
 
@@ -41,7 +40,7 @@ function Addtrans({ addRef }) {
                                 required>
                                 <option value={""}>--Select Type--</option>
                                 <option value={"income"}>Income</option>
-                                <option value={"spend"}>Spend</option>
+                                <option value={"expense"}>Expense</option>
                             </select>
                         </div>
                         <div className="mb-3">

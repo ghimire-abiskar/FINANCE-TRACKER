@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.post('/add', verify, async (req, res) => {
     try {
-        console.log("hey");
         const { type, amount, category, description } = req.body;
         const newtransaction = new Transaction({
             userId: req.user.id,
@@ -16,6 +15,7 @@ router.post('/add', verify, async (req, res) => {
             description
         });
         await newtransaction.save();
+        console.log(newtransaction  );
         res.status(201).json({ newtransaction });
     }
     catch (error) {
@@ -31,7 +31,6 @@ router.get('/all', verify, async (req, res) => {
 
         const transactions = await Transaction.find({ userId: req.user.id }).sort({ date: -1 }).skip(skip).limit(limit);
         const total = Transaction.countDocuments({ userId: req.user.id });
-
         res.json(transactions);
     }
     catch {
