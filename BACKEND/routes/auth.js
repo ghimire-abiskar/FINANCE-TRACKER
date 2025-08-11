@@ -6,6 +6,16 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const jsonwebtoken = 'ABISKAR'
 const router = express.Router();
+const rateLimit=require('express-rate-limit')
+
+const limiter=rateLimit({
+    max:4,
+    windowMs:1000*60*15,
+    handler:(req,res)=>{
+        console.log(req.rateLimit);
+        res.status(429).json({success:false,error:"Multiple attempts failed. Try again after 15 minutes"});
+    }
+})
 
 // User Registration
 router.post('/register',[
@@ -16,6 +26,7 @@ router.post('/register',[
 ], async (req, res) => {
     try {
         const errors=validationResult(req);
+        console.log("Signup request arrived");
         if(!errors.isEmpty())
             return res.status(400).json({error: "Insufficient data provided"});
         const { username, email, password } = req.body;
@@ -33,7 +44,7 @@ router.post('/register',[
 });
 
 // User Login
-router.post('/login', async (req, res) => {
+router.post('/login',limiter, async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });

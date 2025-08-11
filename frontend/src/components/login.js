@@ -30,10 +30,10 @@ const Login = () => {
         navigate("/"); // Redirect to home
       } else {
         setAlert(true);
-        setmsg("Invalid credentials");
+        setmsg(json.error);
         setTimeout(() => {
           setAlert(false);
-        }, 1500);
+        }, 2500);
       }
     }
     catch {
@@ -41,13 +41,17 @@ const Login = () => {
       setmsg("Couldn't connect with the server!!");
       setTimeout(() => {
         setAlert(false);
-      }, 1500);
+      }, 2500);
     }
   };
 
   return (
     <>
-      {alert ? <Notify variant={"warning"} msg={msg}/> : null}
+      <div style={{ height: "70px", marginBottom: "10px" }}>
+        <div style={{ visibility: alert ? "visible" : "hidden" }}>
+          <Notify variant="danger" msg={msg} />
+        </div>
+      </div>
       <div className="container mt-5 d-flex justify-content-center">
         <div className="col-md-4">
           <h2 className="text-center">Login</h2>

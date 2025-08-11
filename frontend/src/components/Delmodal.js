@@ -22,7 +22,7 @@ function Delmodal({ id, delRef }) {
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Add a new Transaction</Modal.Title>
+                    <Modal.Title>Delete the transaction</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     Are you sure want to delete this transaction??
