@@ -7,7 +7,9 @@ const transRoutes = require('./routes/transaction')
 const rateLimit = require('express-rate-limit');
 const port = 5001;
 app.use(express.json())
-app.use(cors());
+app.use(cors({
+    credentials: true,
+}));
 
 const limiter = rateLimit({
     max: 3,
