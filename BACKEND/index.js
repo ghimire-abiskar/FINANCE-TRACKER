@@ -5,7 +5,8 @@ const app = express();
 const authRoutes = require('./routes/auth')
 const transRoutes = require('./routes/transaction')
 const rateLimit = require('express-rate-limit');
-const port = env.port || 5001;
+require('dotenv').config();
+const port = process.env.port || 5001;
 app.use(express.json())
 app.use(cors({
     credentials: true,
