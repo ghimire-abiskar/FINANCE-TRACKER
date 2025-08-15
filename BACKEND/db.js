@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const mongoURI = "mongodb://127.0.0.1:27017/fin_tracker";
+const mongoURI = env.mongoURI || "mongodb://127.0.0.1:27017/expense_tracker";
 
 const connectToMongo = async () => {
     try {

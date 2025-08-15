@@ -4,7 +4,7 @@ const User = require('../models/Users');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const jsonwebtoken = 'ABISKAR'
+const jsonwebtoken = eventNames.JWT_SECRET || "secretkey";
 const router = express.Router();
 const rateLimit=require('express-rate-limit')
 
