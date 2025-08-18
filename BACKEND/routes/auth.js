@@ -4,9 +4,10 @@ const User = require('../models/Users');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const jsonwebtoken = eventNames.JWT_SECRET || "secretkey";
+const jsonwebtoken = process.env.JWT_SECRET || "secretkey";
 const router = express.Router();
-const rateLimit=require('express-rate-limit')
+const rateLimit=require('express-rate-limit');
+const { default: mongoose } = require('mongoose');
 
 const limiter=rateLimit({
     max:4,
@@ -28,17 +29,22 @@ router.post('/register',[
         const errors=validationResult(req);
         console.log("Signup request arrived");
         if(!errors.isEmpty())
-            return res.status(400).json({error: "Insufficient data provided"});
+        {
+            console.log(errors);
+            return res.status(400).json({error: "Incorrect data format"});
+        }
         const { username, email, password } = req.body;
-        const user=User.findOne({email});
+        const user=await User.findOne({email});
         if(user!=null)
-                return res.status(400).json({error:"Email already exists"});
+            return res.status(400).json({error:"Email already exists"});
         const salt = await bcrypt.genSalt(10);
         const new_pass = await bcrypt.hash(password, salt);
-        const newUser = new User({ username, email, password: new_pass });
+        const newUser = new User({ _id: new mongoose.Types.ObjectId(),username, email, password: new_pass });
         await newUser.save();
         res.status(201).json({ message: 'User registered successfully' });
+        console.log("User registered successfully");
     } catch (error) {
+        console.error("Error during registration:", error);
         res.status(500).json({ error });
     }
 });

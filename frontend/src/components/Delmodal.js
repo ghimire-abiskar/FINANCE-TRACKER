@@ -28,11 +28,11 @@ function Delmodal({ id, delRef }) {
                     Are you sure want to delete this transaction??
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button variant="danger" onClick={handleDel}>
+                        Yes
+                    </Button>
                     <Button variant="secondary" onClick={handleClose}>
                         No
-                    </Button>
-                    <Button variant="primary" onClick={handleDel}>
-                        Yes
                     </Button>
                 </Modal.Footer>
             </Modal>

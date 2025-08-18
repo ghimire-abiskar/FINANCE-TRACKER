@@ -2,16 +2,13 @@ import { useContext, useEffect, useState, useRef } from "react";
 import LedgerContext from "../context/Ledgercontext";
 import { useNavigate } from "react-router-dom";
 import Addtrans from './Addtrans'
-import TransModal from './Modal'
-import Delmodal from "./Delmodal";
+import TransactionModal from "../components/Transaction";
 
 const Home = () => {
-  const { ledgers, fetchLedgers, deleteledger } = useContext(LedgerContext);
+  const { ledgers, fetchLedgers } = useContext(LedgerContext);
   const navigator = useNavigate();
-  const [ledger, setledger] = useState({ type: "", category: "", description: "", amount: "", _id: "" });
-  const modalRef = useRef(null);
+
   const addRef = useRef(null);
-  const delRef = useRef(null);
   const [filterType, setFilterType] = useState("all");
   const [categoryType, setcategoryType] = useState("");
   const [minAmount, setminAmount] = useState("");
@@ -34,24 +31,13 @@ const Home = () => {
     }
   }, []);
 
-  const handleEdit = (ldg) => {
-    setledger(ldg);
-    modalRef.current.click();
-  };
-
-  const handleDelete = (ldg) => {
-    setledger(ldg);
-    delRef.current.click();
-  };
-
   const handleAdd = () => {
     addRef.current.click();
   }
 
   return (
     <>
-      <TransModal ledger={ledger} setledger={setledger} modalRef={modalRef} />
-      <Delmodal id={ledger._id} delRef={delRef}></Delmodal>
+
       <div className="container mt-4">
         <h2 className="text-center mb-4">Transactions Overview</h2>
 
@@ -86,31 +72,11 @@ const Home = () => {
 
         <div className="row">
           {filteredLedgers.length > 0 ? (
-            filteredLedgers.map((ledger) => (
-              <div key={ledger._id} className="col-md-4 mb-3">
-                <div className="card shadow-sm p-3">
-                  <h5 className="text-center fw-bold">{ledger.category}</h5>
-                  <p className="text-muted text-center">{ledger.description}</p>
-                  <p className={`fw-bold text-center text-${ledger.type === "income" ? "success" : "danger"}`}>
-                    {ledger.type === "income" ? "+" : "-"} Rs {ledger.amount}
-                  </p>
-                  <div className="d-flex justify-content-center">
-                    <button
-                      className="btn btn-sm btn-warning mx-3"
-                      onClick={() => handleEdit(ledger)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(ledger)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))
+            filteredLedgers.map((ledger) =>
+            (
+              <TransactionModal ledger={ledger}></TransactionModal>
+            )
+            )
           ) : (
             <p className="text-center text-muted">No transactions found</p>
           )}

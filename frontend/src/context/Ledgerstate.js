@@ -95,6 +95,7 @@ let Datacontext = (props) => {
 
     const deleteLedger = async (id) => {
         const url = `${host}/api/trans/delete/${id}`;
+        alert(id);
         try {
             const response = await fetch(url, {
                 method: "DELETE",

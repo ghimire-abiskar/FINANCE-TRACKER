@@ -19,7 +19,7 @@ const Signup = () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(credentials),
+      body: JSON.stringify({username: credentials.name, email: credentials.email, password: credentials.password }),
     });
 
     const json = await response.json();
@@ -34,7 +34,7 @@ const Signup = () => {
       }, 2500);
     } else {
       setAlert(true);
-      setMsg("Couldn't connect with the server!!");
+      setMsg(json.error);
       setTimeout(() => {
         setAlert(false);
       }, 2500);

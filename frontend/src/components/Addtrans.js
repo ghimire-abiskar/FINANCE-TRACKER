@@ -14,6 +14,11 @@ function Addtrans({ addRef }) {
 
     const handleAdd = (e) => {
         e.preventDefault();
+        console.log("Adding ledger:");
+        if(!ledger.type || !ledger.category || !ledger.description || !ledger.amount || isNaN(ledger.amount) || ledger.amount <= 0) {
+            alert("Please fill all fields correctly.");
+            return;
+        }
         addLedger(ledger.type, ledger.amount, ledger.category, ledger.description);
         setledger({ type: "", category: "", description: "", amount: "" });
         handleClose();

@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
+    _id: {
+        type: mongoose.Types.ObjectId,
+        default: () => new mongoose.Types.ObjectId()
+    },
     userId:
     {
         type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true
@@ -27,5 +31,10 @@ const transactionSchema = new mongoose.Schema({
         required: true
     }
 });
+transactionSchema.virtual('transactionId').get(function () {
+    return this._id;
+});
 
+transactionSchema.set('toJSON', { virtuals: true });
+transactionSchema.set('toObject', { virtuals: true });
 module.exports = mongoose.model('Transaction', transactionSchema);

@@ -22,9 +22,7 @@ app.get('/', (req, res) => {
     res.send("Hey I am here!!");
 })
 
-app.use('/api', limiter);
-
-app.use('/api/auth', authRoutes);
+app.use('/api/auth',limiter,authRoutes);
 app.use('/api/trans', transRoutes);
 
 app.listen(port, () => {

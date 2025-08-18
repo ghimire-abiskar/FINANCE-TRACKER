@@ -2,23 +2,25 @@ const express = require('express');
 const Transaction = require('../models/Transaction');
 const verify = require('../middleware/verify')
 const router = express.Router();
-
+const mongoose = require('mongoose');
 
 router.post('/add', verify, async (req, res) => {
     try {
         const { type, amount, category, description } = req.body;
         const newtransaction = new Transaction({
             userId: req.user.id,
+            transactionId: new mongoose.Types.ObjectId(),
             type,
             amount,
             category,
             description
         });
         await newtransaction.save();
-        console.log(newtransaction  );
+        console.log(newtransaction);
         res.status(201).json({ newtransaction });
     }
     catch (error) {
+        console.error("Error adding transaction:", error);
         res.status(500).json({ error });
     }
 })
@@ -41,7 +43,9 @@ router.get('/all', verify, async (req, res) => {
 router.delete('/delete/:id', verify, async (req, res) => {
     try {
         const transaction = await Transaction.findById(req.params.id);
+        console.log("Delete endpoint hit");
         if (!transaction) {
+            console.log(req.params.id);
             return res.status(404).json({ error: "Transaction not found!!!" })
         }
         if (!transaction.userId.toString() == req.user) {
@@ -57,7 +61,7 @@ router.delete('/delete/:id', verify, async (req, res) => {
 
 router.put('/update/:id', verify, async (req, res) => {
     try {
-        const transaction = await Transaction.findById(req.params.id); 
+        const transaction = await Transaction.findById(req.params.id);
         const { type, amount, category, description } = req.body;
         if (!transaction) {
             return res.status(404).json({ error: "Transaction not found!!!" })
@@ -67,12 +71,17 @@ router.put('/update/:id', verify, async (req, res) => {
             return res.status(401).json({ error: "Unauthorized access to update the transaction\n" });
         }
         console.log("hey");
-        transaction.type = type || transaction.type;
-        transaction.amount = amount || transaction.amount;
-        transaction.category = category || transaction.category;
-        transaction.description = description || transaction.description;
 
-        await transaction.save();
+        await Transaction.updateOne({
+            _id: req.params.id
+        }, {
+            $set: {
+                type: type || transaction.type,
+                amount: amount || transaction.amount,
+                category: category || transaction.category,
+                description: description || transaction.description
+            }
+        });
         res.json({ message: "Transaction updated successfully" });
     }
     catch (error) {
